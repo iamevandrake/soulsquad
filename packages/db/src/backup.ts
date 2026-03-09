@@ -24,7 +24,7 @@ function expandHomePrefix(value: string): string {
 function resolvePaperclipHomeDir(): string {
   const envHome = process.env.PAPERCLIP_HOME?.trim();
   if (envHome) return path.resolve(expandHomePrefix(envHome));
-  return path.resolve(os.homedir(), ".paperclip");
+  return path.resolve(os.homedir(), ".opensoul");
 }
 
 function resolvePaperclipInstanceId(): string {
@@ -56,7 +56,7 @@ function asPositiveInt(value: unknown): number | null {
 }
 
 function resolveEmbeddedPort(config: PartialConfig | null): number {
-  return asPositiveInt(config?.database?.embeddedPostgresPort) ?? 54329;
+  return asPositiveInt(config?.database?.embeddedPostgresPort) ?? 54330;
 }
 
 function resolveConnectionString(config: PartialConfig | null): string {
@@ -69,7 +69,7 @@ function resolveConnectionString(config: PartialConfig | null): string {
   }
 
   const port = resolveEmbeddedPort(config);
-  return `postgres://paperclip:paperclip@127.0.0.1:${port}/paperclip`;
+  return `postgres://opensoul:opensoul@127.0.0.1:${port}/opensoul`;
 }
 
 function resolveDefaultBackupDir(): string {
@@ -104,7 +104,7 @@ async function main() {
       connectionString,
       backupDir,
       retentionDays,
-      filenamePrefix: "paperclip",
+      filenamePrefix: "opensoul",
     });
 
     console.log(`Backup saved: ${formatDatabaseBackupResult(result)}`);

@@ -1,6 +1,6 @@
 {
   "name": "@paperclipai/server",
-  "version": "0.3.0",
+  "version": "0.2.7",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
@@ -23,11 +23,8 @@
   ],
   "scripts": {
     "dev": "tsx src/index.ts",
-    "dev:watch": "cross-env PAPERCLIP_MIGRATION_PROMPT=never tsx watch --ignore ../ui/node_modules --ignore ../ui/.vite --ignore ../ui/dist src/index.ts",
-    "prepare:ui-dist": "bash ../scripts/prepare-server-ui-dist.sh",
+    "dev:watch": "OPENSOUL_MIGRATION_PROMPT=never tsx watch --ignore ../ui/node_modules --ignore ../ui/.vite --ignore ../ui/dist src/index.ts",
     "build": "tsc",
-    "prepack": "pnpm run prepare:ui-dist",
-    "postpack": "rm -rf ui-dist",
     "clean": "rm -rf dist",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit"
@@ -51,6 +48,7 @@
     "express": "^5.1.0",
     "multer": "^2.0.2",
     "open": "^11.0.0",
+    "postgres": "^3.4.5",
     "pino": "^9.6.0",
     "pino-http": "^10.4.0",
     "pino-pretty": "^13.1.3",
@@ -61,10 +59,9 @@
     "@types/express": "^5.0.0",
     "@types/express-serve-static-core": "^5.0.0",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.6.0",
+    "@types/node": "^22.12.0",
     "@types/supertest": "^6.0.2",
-    "@types/ws": "^8.18.1",
-    "cross-env": "^10.1.0",
+    "@types/ws": "^8.5.14",
     "supertest": "^7.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",

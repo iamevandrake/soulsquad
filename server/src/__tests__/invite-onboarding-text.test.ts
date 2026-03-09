@@ -14,7 +14,7 @@ function buildReq(host: string): Request {
 
 describe("buildInviteOnboardingTextDocument", () => {
   it("renders a plain-text onboarding doc with expected endpoint references", () => {
-    const req = buildReq("localhost:3100");
+    const req = buildReq("localhost:3200");
     const invite = {
       id: "invite-1",
       companyId: "company-1",
@@ -42,7 +42,7 @@ describe("buildInviteOnboardingTextDocument", () => {
     expect(text).toContain("/api/join-requests/{requestId}/claim-api-key");
     expect(text).toContain("/api/invites/token-123/onboarding.txt");
     expect(text).toContain("Suggested Paperclip base URLs to try");
-    expect(text).toContain("http://localhost:3100");
+    expect(text).toContain("http://localhost:3200");
     expect(text).toContain("host.docker.internal");
     expect(text).toContain("paperclipApiUrl");
     expect(text).toContain("adapterType \"openclaw_gateway\"");
@@ -56,7 +56,7 @@ describe("buildInviteOnboardingTextDocument", () => {
   });
 
   it("includes loopback diagnostics for authenticated/private onboarding", () => {
-    const req = buildReq("localhost:3100");
+    const req = buildReq("localhost:3200");
     const invite = {
       id: "invite-2",
       companyId: "company-1",
@@ -85,7 +85,7 @@ describe("buildInviteOnboardingTextDocument", () => {
   });
 
   it("includes inviter message in the onboarding text when provided", () => {
-    const req = buildReq("localhost:3100");
+    const req = buildReq("localhost:3200");
     const invite = {
       id: "invite-3",
       companyId: "company-1",

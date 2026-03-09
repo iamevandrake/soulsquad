@@ -19,11 +19,11 @@ import { applyDataDirOverride, type DataDirOptionLike } from "./config/data-dir.
 
 const program = new Command();
 const DATA_DIR_OPTION_HELP =
-  "Paperclip data directory root (isolates state from ~/.paperclip)";
+  "OpenSoul data directory root (isolates state from ~/.opensoul)";
 
 program
-  .name("paperclipai")
-  .description("Paperclip CLI — setup, diagnose, and configure your instance")
+  .name("opensoulai")
+  .description("OpenSoul CLI — setup, diagnose, and configure your instance")
   .version("0.2.7");
 
 program.hook("preAction", (_thisCommand, actionCommand) => {

@@ -22,7 +22,7 @@ pnpm install
 pnpm dev
 ```
 
-This starts the API server and UI at [http://localhost:3100](http://localhost:3100).
+This starts the API server and UI at [http://localhost:3200](http://localhost:3200).
 
 No external database required — Paperclip uses an embedded PostgreSQL instance by default.
 

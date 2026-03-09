@@ -62,7 +62,7 @@ describe("mergeJoinDefaultsPayloadForReplay", () => {
     const merged = mergeJoinDefaultsPayloadForReplay(
       {
         url: "ws://old.example:18789",
-        paperclipApiUrl: "http://host.docker.internal:3100",
+        paperclipApiUrl: "http://host.docker.internal:3200",
         headers: {
           "x-openclaw-token": "old-token-1234567890",
           "x-custom": "keep-me",

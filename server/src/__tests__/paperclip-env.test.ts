@@ -39,7 +39,7 @@ describe("buildPaperclipEnv", () => {
     delete process.env.PAPERCLIP_API_URL;
     process.env.PAPERCLIP_LISTEN_HOST = "0.0.0.0";
     process.env.PAPERCLIP_LISTEN_PORT = "3101";
-    process.env.PORT = "3100";
+    process.env.PORT = "3200";
 
     const env = buildPaperclipEnv({ id: "agent-1", companyId: "company-1" });
 

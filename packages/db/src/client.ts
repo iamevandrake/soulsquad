@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import { drizzle as drizzlePg } from "drizzle-orm/postgres-js";
 import { migrate as migratePg } from "drizzle-orm/postgres-js/migrator";
 import { readFile, readdir } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 import postgres from "postgres";
 import * as schema from "./schema/index.js";
 
@@ -703,7 +703,8 @@ export async function migratePostgresIfEmpty(url: string): Promise<MigrationBoot
     }
 
     const db = drizzlePg(sql);
-    await migratePg(db, { migrationsFolder: MIGRATIONS_FOLDER });
+    const migrationsFolder = new URL("./migrations", import.meta.url).pathname;
+    await migratePg(db, { migrationsFolder });
 
     return { migrated: true, reason: "migrated-empty-db", tableCount: 0 };
   } finally {

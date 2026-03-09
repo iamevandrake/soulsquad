@@ -7,7 +7,7 @@ Paperclip exposes a RESTful JSON API for all control plane operations.
 
 ## Base URL
 
-Default: `http://localhost:3100/api`
+Default: `http://localhost:3200/api`
 
 All endpoints are prefixed with `/api`.
 

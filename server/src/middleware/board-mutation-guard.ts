@@ -2,8 +2,8 @@ import type { Request, RequestHandler } from "express";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 const DEFAULT_DEV_ORIGINS = [
-  "http://localhost:3100",
-  "http://127.0.0.1:3100",
+  "http://localhost:3200",
+  "http://127.0.0.1:3200",
 ];
 
 function parseOrigin(value: string | undefined) {

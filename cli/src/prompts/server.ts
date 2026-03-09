@@ -74,8 +74,8 @@ export async function promptServer(opts?: {
 
   const portStr = await p.text({
     message: "Server port",
-    defaultValue: String(currentServer?.port ?? 3100),
-    placeholder: "3100",
+    defaultValue: String(currentServer?.port ?? 3200),
+    placeholder: "3200",
     validate: (val) => {
       const n = Number(val);
       if (isNaN(n) || n < 1 || n > 65535 || !Number.isInteger(n)) {
@@ -112,8 +112,8 @@ export async function promptServer(opts?: {
     allowedHostnames = parseHostnameCsv(allowedHostnamesInput);
   }
 
-  const port = Number(portStr) || 3100;
-  let auth: AuthConfig = { baseUrlMode: "auto", disableSignUp: false };
+  const port = Number(portStr) || 3200;
+  let auth: AuthConfig = { baseUrlMode: "auto" };
   if (deploymentMode === "authenticated" && exposure === "public") {
     const urlInput = await p.text({
       message: "Public base URL",
@@ -139,13 +139,11 @@ export async function promptServer(opts?: {
     }
     auth = {
       baseUrlMode: "explicit",
-      disableSignUp: false,
       publicBaseUrl: urlInput.trim().replace(/\/+$/, ""),
     };
   } else if (currentAuth?.baseUrlMode === "explicit" && currentAuth.publicBaseUrl) {
     auth = {
       baseUrlMode: "explicit",
-      disableSignUp: false,
       publicBaseUrl: currentAuth.publicBaseUrl,
     };
   }

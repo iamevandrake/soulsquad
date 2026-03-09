@@ -19,7 +19,7 @@ pnpm dev
 
 This starts:
 
-- **API server** at `http://localhost:3100`
+- **API server** at `http://localhost:3200`
 - **UI** served by the API server in dev middleware mode (same origin)
 
 No Docker or external database required. Paperclip uses embedded PostgreSQL automatically.
@@ -65,10 +65,10 @@ For full setup and troubleshooting, see [Tailscale Private Access](/deploy/tails
 ## Health Checks
 
 ```sh
-curl http://localhost:3100/api/health
+curl http://localhost:3200/api/health
 # -> {"status":"ok"}
 
-curl http://localhost:3100/api/companies
+curl http://localhost:3200/api/companies
 # -> []
 ```
 

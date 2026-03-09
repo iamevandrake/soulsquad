@@ -14,8 +14,7 @@ import {
   storageCheck,
   type CheckResult,
 } from "../checks/index.js";
-import { loadPaperclipEnvFile } from "../config/env.js";
-import { printPaperclipCliBanner } from "../utils/banner.js";
+import { printOpenSoulCliBanner } from "../utils/banner.js";
 
 const STATUS_ICON = {
   pass: pc.green("✓"),
@@ -28,11 +27,10 @@ export async function doctor(opts: {
   repair?: boolean;
   yes?: boolean;
 }): Promise<{ passed: number; warned: number; failed: number }> {
-  printPaperclipCliBanner();
-  p.intro(pc.bgCyan(pc.black(" paperclip doctor ")));
+  printOpenSoulCliBanner();
+  p.intro(pc.bgCyan(pc.black(" opensoul doctor ")));
 
   const configPath = resolveConfigPath(opts.config);
-  loadPaperclipEnvFile(configPath);
   const results: CheckResult[] = [];
 
   // 1. Config check (must pass before others)
@@ -53,7 +51,7 @@ export async function doctor(opts: {
       status: "fail",
       message: `Could not read config: ${err instanceof Error ? err.message : String(err)}`,
       canRepair: false,
-      repairHint: "Run `paperclipai configure --section database` or `paperclipai onboard`",
+      repairHint: "Run `opensoulai configure --section database` or `opensoulai onboard`",
     };
     results.push(readResult);
     printResult(readResult);

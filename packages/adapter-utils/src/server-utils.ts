@@ -15,11 +15,6 @@ interface RunningProcess {
   graceSec: number;
 }
 
-interface SpawnTarget {
-  command: string;
-  args: string[];
-}
-
 type ChildProcessWithEvents = ChildProcess & {
   on(event: "error", listener: (err: Error) => void): ChildProcess;
   on(
@@ -117,7 +112,7 @@ export function buildPaperclipEnv(agent: { id: string; companyId: string }): Rec
   const runtimeHost = resolveHostForUrl(
     process.env.PAPERCLIP_LISTEN_HOST ?? process.env.HOST ?? "localhost",
   );
-  const runtimePort = process.env.PAPERCLIP_LISTEN_PORT ?? process.env.PORT ?? "3100";
+  const runtimePort = process.env.PAPERCLIP_LISTEN_PORT ?? process.env.PORT ?? "3200";
   const apiUrl = process.env.PAPERCLIP_API_URL ?? `http://${runtimeHost}:${runtimePort}`;
   vars.PAPERCLIP_API_URL = apiUrl;
   return vars;
@@ -128,78 +123,6 @@ export function defaultPathForPlatform() {
     return "C:\\Windows\\System32;C:\\Windows;C:\\Windows\\System32\\Wbem";
   }
   return "/usr/local/bin:/opt/homebrew/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin";
-}
-
-function windowsPathExts(env: NodeJS.ProcessEnv): string[] {
-  return (env.PATHEXT ?? ".EXE;.CMD;.BAT;.COM").split(";").filter(Boolean);
-}
-
-async function pathExists(candidate: string) {
-  try {
-    await fs.access(candidate, process.platform === "win32" ? fsConstants.F_OK : fsConstants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function resolveCommandPath(command: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
-  const hasPathSeparator = command.includes("/") || command.includes("\\");
-  if (hasPathSeparator) {
-    const absolute = path.isAbsolute(command) ? command : path.resolve(cwd, command);
-    return (await pathExists(absolute)) ? absolute : null;
-  }
-
-  const pathValue = env.PATH ?? env.Path ?? "";
-  const delimiter = process.platform === "win32" ? ";" : ":";
-  const dirs = pathValue.split(delimiter).filter(Boolean);
-  const exts = process.platform === "win32" ? windowsPathExts(env) : [""];
-  const hasExtension = process.platform === "win32" && path.extname(command).length > 0;
-
-  for (const dir of dirs) {
-    const candidates =
-      process.platform === "win32"
-        ? hasExtension
-          ? [path.join(dir, command)]
-          : exts.map((ext) => path.join(dir, `${command}${ext}`))
-        : [path.join(dir, command)];
-    for (const candidate of candidates) {
-      if (await pathExists(candidate)) return candidate;
-    }
-  }
-
-  return null;
-}
-
-function quoteForCmd(arg: string) {
-  if (!arg.length) return '""';
-  const escaped = arg.replace(/"/g, '""');
-  return /[\s"&<>|^()]/.test(escaped) ? `"${escaped}"` : escaped;
-}
-
-async function resolveSpawnTarget(
-  command: string,
-  args: string[],
-  cwd: string,
-  env: NodeJS.ProcessEnv,
-): Promise<SpawnTarget> {
-  const resolved = await resolveCommandPath(command, cwd, env);
-  const executable = resolved ?? command;
-
-  if (process.platform !== "win32") {
-    return { command: executable, args };
-  }
-
-  if (/\.(cmd|bat)$/i.test(executable)) {
-    const shell = env.ComSpec || process.env.ComSpec || "cmd.exe";
-    const commandLine = [quoteForCmd(executable), ...args.map(quoteForCmd)].join(" ");
-    return {
-      command: shell,
-      args: ["/d", "/s", "/c", commandLine],
-    };
-  }
-
-  return { command: executable, args };
 }
 
 export function ensurePathInEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
@@ -246,12 +169,36 @@ export async function ensureAbsoluteDirectory(
 }
 
 export async function ensureCommandResolvable(command: string, cwd: string, env: NodeJS.ProcessEnv) {
-  const resolved = await resolveCommandPath(command, cwd, env);
-  if (resolved) return;
-  if (command.includes("/") || command.includes("\\")) {
+  const hasPathSeparator = command.includes("/") || command.includes("\\");
+  if (hasPathSeparator) {
     const absolute = path.isAbsolute(command) ? command : path.resolve(cwd, command);
-    throw new Error(`Command is not executable: "${command}" (resolved: "${absolute}")`);
+    try {
+      await fs.access(absolute, fsConstants.X_OK);
+    } catch {
+      throw new Error(`Command is not executable: "${command}" (resolved: "${absolute}")`);
+    }
+    return;
   }
+
+  const pathValue = env.PATH ?? env.Path ?? "";
+  const delimiter = process.platform === "win32" ? ";" : ":";
+  const dirs = pathValue.split(delimiter).filter(Boolean);
+  const windowsExt = process.platform === "win32"
+    ? (env.PATHEXT ?? ".EXE;.CMD;.BAT;.COM").split(";")
+    : [""];
+
+  for (const dir of dirs) {
+    for (const ext of windowsExt) {
+      const candidate = path.join(dir, process.platform === "win32" ? `${command}${ext}` : command);
+      try {
+        await fs.access(candidate, fsConstants.X_OK);
+        return;
+      } catch {
+        // continue scanning PATH
+      }
+    }
+  }
+
   throw new Error(`Command not found in PATH: "${command}"`);
 }
 
@@ -273,82 +220,78 @@ export async function runChildProcess(
 
   return new Promise<RunProcessResult>((resolve, reject) => {
     const mergedEnv = ensurePathInEnv({ ...process.env, ...opts.env });
-    void resolveSpawnTarget(command, args, opts.cwd, mergedEnv)
-      .then((target) => {
-        const child = spawn(target.command, target.args, {
-          cwd: opts.cwd,
-          env: mergedEnv,
-          shell: false,
-          stdio: [opts.stdin != null ? "pipe" : "ignore", "pipe", "pipe"],
-        }) as ChildProcessWithEvents;
+    const child = spawn(command, args, {
+      cwd: opts.cwd,
+      env: mergedEnv,
+      shell: false,
+      stdio: [opts.stdin != null ? "pipe" : "ignore", "pipe", "pipe"],
+    }) as ChildProcessWithEvents;
 
-        if (opts.stdin != null && child.stdin) {
-          child.stdin.write(opts.stdin);
-          child.stdin.end();
-        }
+    if (opts.stdin != null && child.stdin) {
+      child.stdin.write(opts.stdin);
+      child.stdin.end();
+    }
 
-        runningProcesses.set(runId, { child, graceSec: opts.graceSec });
+    runningProcesses.set(runId, { child, graceSec: opts.graceSec });
 
-        let timedOut = false;
-        let stdout = "";
-        let stderr = "";
-        let logChain: Promise<void> = Promise.resolve();
+    let timedOut = false;
+    let stdout = "";
+    let stderr = "";
+    let logChain: Promise<void> = Promise.resolve();
 
-        const timeout =
-          opts.timeoutSec > 0
-            ? setTimeout(() => {
-                timedOut = true;
-                child.kill("SIGTERM");
-                setTimeout(() => {
-                  if (!child.killed) {
-                    child.kill("SIGKILL");
-                  }
-                }, Math.max(1, opts.graceSec) * 1000);
-              }, opts.timeoutSec * 1000)
-            : null;
+    const timeout =
+      opts.timeoutSec > 0
+        ? setTimeout(() => {
+            timedOut = true;
+            child.kill("SIGTERM");
+            setTimeout(() => {
+              if (!child.killed) {
+                child.kill("SIGKILL");
+              }
+            }, Math.max(1, opts.graceSec) * 1000);
+          }, opts.timeoutSec * 1000)
+        : null;
 
-        child.stdout?.on("data", (chunk: unknown) => {
-          const text = String(chunk);
-          stdout = appendWithCap(stdout, text);
-          logChain = logChain
-            .then(() => opts.onLog("stdout", text))
-            .catch((err) => onLogError(err, runId, "failed to append stdout log chunk"));
+    child.stdout?.on("data", (chunk: unknown) => {
+      const text = String(chunk);
+      stdout = appendWithCap(stdout, text);
+      logChain = logChain
+        .then(() => opts.onLog("stdout", text))
+        .catch((err) => onLogError(err, runId, "failed to append stdout log chunk"));
+    });
+
+    child.stderr?.on("data", (chunk: unknown) => {
+      const text = String(chunk);
+      stderr = appendWithCap(stderr, text);
+      logChain = logChain
+        .then(() => opts.onLog("stderr", text))
+        .catch((err) => onLogError(err, runId, "failed to append stderr log chunk"));
+    });
+
+    child.on("error", (err: Error) => {
+      if (timeout) clearTimeout(timeout);
+      runningProcesses.delete(runId);
+      const errno = (err as NodeJS.ErrnoException).code;
+      const pathValue = mergedEnv.PATH ?? mergedEnv.Path ?? "";
+      const msg =
+        errno === "ENOENT"
+          ? `Failed to start command "${command}" in "${opts.cwd}". Verify adapter command, working directory, and PATH (${pathValue}).`
+          : `Failed to start command "${command}" in "${opts.cwd}": ${err.message}`;
+      reject(new Error(msg));
+    });
+
+    child.on("close", (code: number | null, signal: NodeJS.Signals | null) => {
+      if (timeout) clearTimeout(timeout);
+      runningProcesses.delete(runId);
+      void logChain.finally(() => {
+        resolve({
+          exitCode: code,
+          signal,
+          timedOut,
+          stdout,
+          stderr,
         });
-
-        child.stderr?.on("data", (chunk: unknown) => {
-          const text = String(chunk);
-          stderr = appendWithCap(stderr, text);
-          logChain = logChain
-            .then(() => opts.onLog("stderr", text))
-            .catch((err) => onLogError(err, runId, "failed to append stderr log chunk"));
-        });
-
-        child.on("error", (err: Error) => {
-          if (timeout) clearTimeout(timeout);
-          runningProcesses.delete(runId);
-          const errno = (err as NodeJS.ErrnoException).code;
-          const pathValue = mergedEnv.PATH ?? mergedEnv.Path ?? "";
-          const msg =
-            errno === "ENOENT"
-              ? `Failed to start command "${command}" in "${opts.cwd}". Verify adapter command, working directory, and PATH (${pathValue}).`
-              : `Failed to start command "${command}" in "${opts.cwd}": ${err.message}`;
-          reject(new Error(msg));
-        });
-
-        child.on("close", (code: number | null, signal: NodeJS.Signals | null) => {
-          if (timeout) clearTimeout(timeout);
-          runningProcesses.delete(runId);
-          void logChain.finally(() => {
-            resolve({
-              exitCode: code,
-              signal,
-              timedOut,
-              stdout,
-              stderr,
-            });
-          });
-        });
-      })
-      .catch(reject);
+      });
+    });
   });
 }

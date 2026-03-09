@@ -24,32 +24,32 @@ function createApp(opts: { enabled: boolean; allowedHostnames?: string[]; bindHo
 describe("privateHostnameGuard", () => {
   it("allows requests when disabled", async () => {
     const app = createApp({ enabled: false });
-    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3100");
+    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3200");
     expect(res.status).toBe(200);
   });
 
   it("allows loopback hostnames", async () => {
     const app = createApp({ enabled: true });
-    const res = await request(app).get("/api/health").set("Host", "localhost:3100");
+    const res = await request(app).get("/api/health").set("Host", "localhost:3200");
     expect(res.status).toBe(200);
   });
 
   it("allows explicitly configured hostnames", async () => {
     const app = createApp({ enabled: true, allowedHostnames: ["dotta-macbook-pro"] });
-    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3100");
+    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3200");
     expect(res.status).toBe(200);
   });
 
   it("blocks unknown hostnames with remediation command", async () => {
     const app = createApp({ enabled: true, allowedHostnames: ["some-other-host"] });
-    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3100");
+    const res = await request(app).get("/api/health").set("Host", "dotta-macbook-pro:3200");
     expect(res.status).toBe(403);
     expect(res.body?.error).toContain("please run pnpm paperclipai allowed-hostname dotta-macbook-pro");
   });
 
   it("blocks unknown hostnames on page routes with plain-text remediation command", async () => {
     const app = createApp({ enabled: true, allowedHostnames: ["some-other-host"] });
-    const res = await request(app).get("/dashboard").set("Host", "dotta-macbook-pro:3100");
+    const res = await request(app).get("/dashboard").set("Host", "dotta-macbook-pro:3200");
     expect(res.status).toBe(403);
     expect(res.text).toContain("please run pnpm paperclipai allowed-hostname dotta-macbook-pro");
   });

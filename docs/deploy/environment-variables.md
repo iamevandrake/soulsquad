@@ -9,7 +9,7 @@ All environment variables that Paperclip uses for server configuration.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `PORT` | `3100` | Server port |
+| `PORT` | `3200` | Server port |
 | `HOST` | `127.0.0.1` | Server host binding |
 | `DATABASE_URL` | (embedded) | PostgreSQL connection string |
 | `PAPERCLIP_HOME` | `~/.paperclip` | Base directory for all Paperclip data |

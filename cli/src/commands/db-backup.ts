@@ -8,7 +8,7 @@ import {
   resolvePaperclipInstanceId,
 } from "../config/home.js";
 import { readConfig, resolveConfigPath } from "../config/store.js";
-import { printPaperclipCliBanner } from "../utils/banner.js";
+import { printOpenSoulCliBanner } from "../utils/banner.js";
 
 type DbBackupOptions = {
   config?: string;
@@ -27,9 +27,9 @@ function resolveConnectionString(configPath?: string): { value: string; source: 
     return { value: config.database.connectionString.trim(), source: "config.database.connectionString" };
   }
 
-  const port = config?.database.embeddedPostgresPort ?? 54329;
+  const port = config?.database.embeddedPostgresPort ?? 54330;
   return {
-    value: `postgres://paperclip:paperclip@127.0.0.1:${port}/paperclip`,
+    value: `postgres://opensoul:opensoul@127.0.0.1:${port}/opensoul`,
     source: `embedded-postgres@${port}`,
   };
 }
@@ -47,8 +47,8 @@ function resolveBackupDir(raw: string): string {
 }
 
 export async function dbBackupCommand(opts: DbBackupOptions): Promise<void> {
-  printPaperclipCliBanner();
-  p.intro(pc.bgCyan(pc.black(" paperclip db:backup ")));
+  printOpenSoulCliBanner();
+  p.intro(pc.bgCyan(pc.black(" opensoul db:backup ")));
 
   const configPath = resolveConfigPath(opts.config);
   const config = readConfig(opts.config);
@@ -60,7 +60,7 @@ export async function dbBackupCommand(opts: DbBackupOptions): Promise<void> {
     opts.retentionDays,
     config?.database.backup.retentionDays ?? 30,
   );
-  const filenamePrefix = opts.filenamePrefix?.trim() || "paperclip";
+  const filenamePrefix = opts.filenamePrefix?.trim() || "opensoul";
 
   p.log.message(pc.dim(`Config: ${configPath}`));
   p.log.message(pc.dim(`Connection source: ${connection.source}`));

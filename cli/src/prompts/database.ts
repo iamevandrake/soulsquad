@@ -13,7 +13,7 @@ export async function promptDatabase(current?: DatabaseConfig): Promise<Database
   const base: DatabaseConfig = current ?? {
     mode: "embedded-postgres",
     embeddedPostgresDataDir: defaultEmbeddedDir,
-    embeddedPostgresPort: 54329,
+    embeddedPostgresPort: 54330,
     backup: {
       enabled: true,
       intervalMinutes: 60,
@@ -38,13 +38,13 @@ export async function promptDatabase(current?: DatabaseConfig): Promise<Database
 
   let connectionString: string | undefined = base.connectionString;
   let embeddedPostgresDataDir = base.embeddedPostgresDataDir || defaultEmbeddedDir;
-  let embeddedPostgresPort = base.embeddedPostgresPort || 54329;
+  let embeddedPostgresPort = base.embeddedPostgresPort || 54330;
 
   if (mode === "postgres") {
     const value = await p.text({
       message: "PostgreSQL connection string",
       defaultValue: base.connectionString ?? "",
-      placeholder: "postgres://user:pass@localhost:5432/paperclip",
+      placeholder: "postgres://user:pass@localhost:5432/opensoul",
       validate: (val) => {
         if (!val) return "Connection string is required for PostgreSQL mode";
         if (!val.startsWith("postgres")) return "Must be a postgres:// or postgresql:// URL";
@@ -73,8 +73,8 @@ export async function promptDatabase(current?: DatabaseConfig): Promise<Database
 
     const portValue = await p.text({
       message: "Embedded PostgreSQL port",
-      defaultValue: String(base.embeddedPostgresPort || 54329),
-      placeholder: "54329",
+      defaultValue: String(base.embeddedPostgresPort || 54330),
+      placeholder: "54330",
       validate: (val) => {
         const n = Number(val);
         if (!Number.isInteger(n) || n < 1 || n > 65535) return "Port must be an integer between 1 and 65535";
@@ -86,7 +86,7 @@ export async function promptDatabase(current?: DatabaseConfig): Promise<Database
       process.exit(0);
     }
 
-    embeddedPostgresPort = Number(portValue || "54329");
+    embeddedPostgresPort = Number(portValue || "54330");
     connectionString = undefined;
   }
 

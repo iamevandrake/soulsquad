@@ -1,4 +1,4 @@
-# Contributing Guide
+# Contributing to opensoul
 
 Thanks for wanting to contribute!
 

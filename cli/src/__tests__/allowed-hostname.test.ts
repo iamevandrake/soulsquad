@@ -20,7 +20,7 @@ function writeBaseConfig(configPath: string) {
     database: {
       mode: "embedded-postgres",
       embeddedPostgresDataDir: "/tmp/paperclip-db",
-      embeddedPostgresPort: 54329,
+      embeddedPostgresPort: 54330,
       backup: {
         enabled: true,
         intervalMinutes: 60,
@@ -36,13 +36,12 @@ function writeBaseConfig(configPath: string) {
       deploymentMode: "authenticated",
       exposure: "private",
       host: "0.0.0.0",
-      port: 3100,
+      port: 3200,
       allowedHostnames: [],
       serveUi: true,
     },
     auth: {
       baseUrlMode: "auto",
-      disableSignUp: false,
     },
     storage: {
       provider: "local_disk",
@@ -68,7 +67,7 @@ describe("allowed-hostname command", () => {
     const configPath = createTempConfigPath();
     writeBaseConfig(configPath);
 
-    await addAllowedHostname("https://Dotta-MacBook-Pro:3100", { config: configPath });
+    await addAllowedHostname("https://Dotta-MacBook-Pro:3200", { config: configPath });
     await addAllowedHostname("dotta-macbook-pro", { config: configPath });
 
     const raw = JSON.parse(fs.readFileSync(configPath, "utf-8")) as PaperclipConfig;

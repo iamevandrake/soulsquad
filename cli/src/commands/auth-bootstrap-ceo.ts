@@ -3,7 +3,6 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { createDb, instanceUserRoles, invites } from "@paperclipai/db";
-import { loadPaperclipEnvFile } from "../config/env.js";
 import { readConfig, resolveConfigPath } from "../config/store.js";
 
 function hashToken(token: string) {
@@ -14,16 +13,15 @@ function createInviteToken() {
   return `pcp_bootstrap_${randomBytes(24).toString("hex")}`;
 }
 
-function resolveDbUrl(configPath?: string, explicitDbUrl?: string) {
-  if (explicitDbUrl) return explicitDbUrl;
+function resolveDbUrl(configPath?: string) {
   const config = readConfig(configPath);
   if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
   if (config?.database.mode === "postgres" && config.database.connectionString) {
     return config.database.connectionString;
   }
   if (config?.database.mode === "embedded-postgres") {
-    const port = config.database.embeddedPostgresPort ?? 54329;
-    return `postgres://paperclip:paperclip@127.0.0.1:${port}/paperclip`;
+    const port = config.database.embeddedPostgresPort ?? 54330;
+    return `postgres://opensoul:opensoul@127.0.0.1:${port}/opensoul`;
   }
   return null;
 }
@@ -41,7 +39,7 @@ function resolveBaseUrl(configPath?: string, explicitBaseUrl?: string) {
     return config.auth.publicBaseUrl.replace(/\/+$/, "");
   }
   const host = config?.server.host ?? "localhost";
-  const port = config?.server.port ?? 3100;
+  const port = config?.server.port ?? 3200;
   const publicHost = host === "0.0.0.0" ? "localhost" : host;
   return `http://${publicHost}:${port}`;
 }
@@ -51,22 +49,20 @@ export async function bootstrapCeoInvite(opts: {
   force?: boolean;
   expiresHours?: number;
   baseUrl?: string;
-  dbUrl?: string;
 }) {
   const configPath = resolveConfigPath(opts.config);
-  loadPaperclipEnvFile(configPath);
   const config = readConfig(configPath);
   if (!config) {
-    p.log.error(`No config found at ${configPath}. Run ${pc.cyan("paperclip onboard")} first.`);
+    p.log.error(`No config found at ${configPath}. Run ${pc.cyan("opensoulai onboard")} first.`);
     return;
   }
 
   if (config.server.deploymentMode !== "authenticated") {
-    p.log.info("Deployment mode is local_trusted. Bootstrap CEO invite is only required for authenticated mode.");
+    p.log.info("Deployment mode is local_trusted. Bootstrap invite is only required for authenticated mode.");
     return;
   }
 
-  const dbUrl = resolveDbUrl(configPath, opts.dbUrl);
+  const dbUrl = resolveDbUrl(configPath);
   if (!dbUrl) {
     p.log.error(
       "Could not resolve database connection for bootstrap.",
@@ -75,11 +71,6 @@ export async function bootstrapCeoInvite(opts: {
   }
 
   const db = createDb(dbUrl);
-  const closableDb = db as typeof db & {
-    $client?: {
-      end?: (options?: { timeout?: number }) => Promise<void>;
-    };
-  };
   try {
     const existingAdminCount = await db
       .select()
@@ -121,13 +112,11 @@ export async function bootstrapCeoInvite(opts: {
 
     const baseUrl = resolveBaseUrl(configPath, opts.baseUrl);
     const inviteUrl = `${baseUrl}/invite/${token}`;
-    p.log.success("Created bootstrap CEO invite.");
+    p.log.success("Created bootstrap invite.");
     p.log.message(`Invite URL: ${pc.cyan(inviteUrl)}`);
     p.log.message(`Expires: ${pc.dim(created.expiresAt.toISOString())}`);
   } catch (err) {
     p.log.error(`Could not create bootstrap invite: ${err instanceof Error ? err.message : String(err)}`);
-    p.log.info("If using embedded-postgres, start the Paperclip server and run this command again.");
-  } finally {
-    await closableDb.$client?.end?.({ timeout: 5 }).catch(() => undefined);
+    p.log.info("If using embedded-postgres, start the OpenSoul server and run this command again.");
   }
 }

@@ -4,8 +4,9 @@ Guidance for human and AI contributors working in this repository.
 
 ## 1. Purpose
 
-Paperclip is a control plane for AI-agent companies.
-The current implementation target is V1 and is defined in `doc/SPEC-implementation.md`.
+opensoul is an agentic marketing stack built on [Paperclip](https://github.com/paperclipai/paperclip). It provides a pre-configured marketing agency org — Director, Strategist, Producer, Creative, Growth Marketer, and Analyst — orchestrated as autonomous AI agents.
+
+The underlying platform is Paperclip V1, defined in `doc/SPEC-implementation.md`.
 
 ## 2. Read This First
 
@@ -39,14 +40,14 @@ pnpm dev
 
 This starts:
 
-- API: `http://localhost:3100`
-- UI: `http://localhost:3100` (served by API server in dev middleware mode)
+- API: `http://localhost:3200`
+- UI: `http://localhost:3200` (served by API server in dev middleware mode)
 
 Quick checks:
 
 ```sh
-curl http://localhost:3100/api/health
-curl http://localhost:3100/api/companies
+curl http://localhost:3200/api/health
+curl http://localhost:3200/api/companies
 ```
 
 Reset local dev DB:

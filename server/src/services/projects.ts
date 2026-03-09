@@ -12,7 +12,7 @@ import {
 
 type ProjectRow = typeof projects.$inferSelect;
 type ProjectWorkspaceRow = typeof projectWorkspaces.$inferSelect;
-const REPO_ONLY_CWD_SENTINEL = "/__paperclip_repo_only__";
+const REPO_ONLY_CWD_SENTINEL = "/__opensoul_repo_only__";
 type CreateWorkspaceInput = {
   name?: string | null;
   cwd?: string | null;

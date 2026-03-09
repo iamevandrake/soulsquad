@@ -42,7 +42,7 @@ const projectStatuses = [
 ];
 
 type WorkspaceSetup = "none" | "local" | "repo" | "both";
-const REPO_ONLY_CWD_SENTINEL = "/__paperclip_repo_only__";
+const REPO_ONLY_CWD_SENTINEL = "/__opensoul_repo_only__";
 
 export function NewProjectDialog() {
   const { newProjectOpen, closeNewProject } = useDialog();

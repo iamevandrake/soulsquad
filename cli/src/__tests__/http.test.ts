@@ -13,7 +13,7 @@ describe("PaperclipApiClient", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const client = new PaperclipApiClient({
-      apiBase: "http://localhost:3100",
+      apiBase: "http://localhost:3200",
       apiKey: "token-123",
       runId: "run-abc",
     });
@@ -36,7 +36,7 @@ describe("PaperclipApiClient", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    const client = new PaperclipApiClient({ apiBase: "http://localhost:3100" });
+    const client = new PaperclipApiClient({ apiBase: "http://localhost:3200" });
     const result = await client.get("/api/missing", { ignoreNotFound: true });
     expect(result).toBeNull();
   });
@@ -50,7 +50,7 @@ describe("PaperclipApiClient", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    const client = new PaperclipApiClient({ apiBase: "http://localhost:3100" });
+    const client = new PaperclipApiClient({ apiBase: "http://localhost:3200" });
 
     await expect(client.post("/api/issues/1/checkout", {})).rejects.toMatchObject({
       status: 409,

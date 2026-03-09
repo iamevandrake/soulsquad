@@ -28,7 +28,7 @@ describe("client context store", () => {
     upsertProfile(
       "work",
       {
-        apiBase: "http://localhost:3100",
+        apiBase: "http://localhost:3200",
         companyId: "company-123",
         apiKeyEnvVarName: "PAPERCLIP_AGENT_TOKEN",
       },
@@ -40,7 +40,7 @@ describe("client context store", () => {
 
     expect(context.currentProfile).toBe("work");
     expect(context.profiles.work).toEqual({
-      apiBase: "http://localhost:3100",
+      apiBase: "http://localhost:3200",
       companyId: "company-123",
       apiKeyEnvVarName: "PAPERCLIP_AGENT_TOKEN",
     });

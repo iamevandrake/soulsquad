@@ -88,12 +88,12 @@ export function NewAgentDialog() {
     enabled: !!selectedCompanyId && newAgentOpen,
   });
 
-  const ceoAgent = (agents ?? []).find((a) => a.role === "ceo");
+  const directorAgent = (agents ?? []).find((a) => a.role === "director");
 
-  function handleAskCeo() {
+  function handleAskDirector() {
     closeNewAgent();
     openNewIssue({
-      assigneeAgentId: ceoAgent?.id,
+      assigneeAgentId: directorAgent?.id,
       title: "Create a new agent",
       description: "(type in what kind of agent you want here)",
     });
@@ -148,15 +148,15 @@ export function NewAgentDialog() {
                   <Sparkles className="h-6 w-6 text-foreground" />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  We recommend letting your CEO handle agent setup — they know the
+                  We recommend letting your Director handle agent setup — they know the
                   org structure and can configure reporting, permissions, and
                   adapters.
                 </p>
               </div>
 
-              <Button className="w-full" size="lg" onClick={handleAskCeo}>
+              <Button className="w-full" size="lg" onClick={handleAskDirector}>
                 <Bot className="h-4 w-4 mr-2" />
-                Ask the CEO to create a new agent
+                Ask the Director to create a new agent
               </Button>
 
               {/* Advanced link */}

@@ -1,6 +1,6 @@
 .git
 .github
-.paperclip
+.opensoul
 .pnpm-store
 node_modules
 **/node_modules

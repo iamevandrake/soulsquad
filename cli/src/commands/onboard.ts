@@ -32,7 +32,7 @@ import {
   resolvePaperclipInstanceId,
 } from "../config/home.js";
 import { bootstrapCeoInvite } from "./auth-bootstrap-ceo.js";
-import { printPaperclipCliBanner } from "../utils/banner.js";
+import { printOpenSoulCliBanner } from "../utils/banner.js";
 
 type SetupMode = "quickstart" | "advanced";
 
@@ -163,7 +163,7 @@ function quickstartDefaultsFromEnv(): {
       mode: databaseUrl ? "postgres" : "embedded-postgres",
       ...(databaseUrl ? { connectionString: databaseUrl } : {}),
       embeddedPostgresDataDir: resolveDefaultEmbeddedPostgresDir(instanceId),
-      embeddedPostgresPort: 54329,
+      embeddedPostgresPort: 54330,
       backup: {
         enabled: databaseBackupEnabled,
         intervalMinutes: databaseBackupIntervalMinutes,
@@ -179,13 +179,12 @@ function quickstartDefaultsFromEnv(): {
       deploymentMode,
       exposure: deploymentExposure,
       host: process.env.HOST ?? "127.0.0.1",
-      port: Number(process.env.PORT) || 3100,
+      port: Number(process.env.PORT) || 3200,
       allowedHostnames: Array.from(new Set([...allowedHostnamesFromEnv, ...(hostnameFromPublicUrl ? [hostnameFromPublicUrl] : [])])),
       serveUi: parseBooleanFromEnv(process.env.SERVE_UI) ?? true,
     },
     auth: {
       baseUrlMode: authBaseUrlMode,
-      disableSignUp: false,
       ...(authPublicBaseUrl ? { publicBaseUrl: authPublicBaseUrl } : {}),
     },
     storage: {
@@ -229,13 +228,9 @@ function quickstartDefaultsFromEnv(): {
   return { defaults, usedEnvKeys, ignoredEnvKeys };
 }
 
-function canCreateBootstrapInviteImmediately(config: Pick<PaperclipConfig, "database" | "server">): boolean {
-  return config.server.deploymentMode === "authenticated" && config.database.mode !== "embedded-postgres";
-}
-
 export async function onboard(opts: OnboardOptions): Promise<void> {
-  printPaperclipCliBanner();
-  p.intro(pc.bgCyan(pc.black(" paperclipai onboard ")));
+  printOpenSoulCliBanner();
+  p.intro(pc.bgCyan(pc.black(" opensoulai onboard ")));
   const configPath = resolveConfigPath(opts.config);
   const instance = describeLocalInstancePaths(resolvePaperclipInstanceId());
   p.log.message(
@@ -309,7 +304,7 @@ export async function onboard(opts: OnboardOptions): Promise<void> {
         await db.execute("SELECT 1");
         s.stop("Database connection successful");
       } catch {
-        s.stop(pc.yellow("Could not connect to database — you can fix this later with `paperclipai doctor`"));
+        s.stop(pc.yellow("Could not connect to database — you can fix this later with `opensoulai doctor`"));
       }
     }
 
@@ -447,22 +442,22 @@ export async function onboard(opts: OnboardOptions): Promise<void> {
 
   p.note(
     [
-      `Run: ${pc.cyan("paperclipai run")}`,
-      `Reconfigure later: ${pc.cyan("paperclipai configure")}`,
-      `Diagnose setup: ${pc.cyan("paperclipai doctor")}`,
+      `Run: ${pc.cyan("opensoulai run")}`,
+      `Reconfigure later: ${pc.cyan("opensoulai configure")}`,
+      `Diagnose setup: ${pc.cyan("opensoulai doctor")}`,
     ].join("\n"),
     "Next commands",
   );
 
-  if (canCreateBootstrapInviteImmediately({ database, server })) {
-    p.log.step("Generating bootstrap CEO invite");
+  if (server.deploymentMode === "authenticated") {
+    p.log.step("Generating bootstrap invite");
     await bootstrapCeoInvite({ config: configPath });
   }
 
   let shouldRunNow = opts.run === true || opts.yes === true;
   if (!shouldRunNow && !opts.invokedByRun && process.stdin.isTTY && process.stdout.isTTY) {
     const answer = await p.confirm({
-      message: "Start Paperclip now?",
+      message: "Start OpenSoul now?",
       initialValue: true,
     });
     if (!p.isCancel(answer)) {
@@ -475,16 +470,6 @@ export async function onboard(opts: OnboardOptions): Promise<void> {
     const { runCommand } = await import("./run.js");
     await runCommand({ config: configPath, repair: true, yes: true });
     return;
-  }
-
-  if (server.deploymentMode === "authenticated" && database.mode === "embedded-postgres") {
-    p.log.info(
-      [
-        "Bootstrap CEO invite will be created after the server starts.",
-        `Next: ${pc.cyan("paperclipai run")}`,
-        `Then: ${pc.cyan("paperclipai auth bootstrap-ceo")}`,
-      ].join("\n"),
-    );
   }
 
   p.outro("You're all set!");

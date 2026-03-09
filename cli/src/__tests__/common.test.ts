@@ -57,7 +57,7 @@ describe("resolveCommandContext", () => {
         currentProfile: "default",
         profiles: {
           default: {
-            apiBase: "http://profile:3100",
+            apiBase: "http://profile:3200",
             companyId: "company-profile",
           },
         },
@@ -92,7 +92,7 @@ describe("resolveCommandContext", () => {
     );
 
     expect(() =>
-      resolveCommandContext({ context: contextPath, apiBase: "http://localhost:3100" }, { requireCompany: true }),
+      resolveCommandContext({ context: contextPath, apiBase: "http://localhost:3200" }, { requireCompany: true }),
     ).toThrow(/Company ID is required/);
   });
 });

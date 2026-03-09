@@ -15,7 +15,7 @@ import {
   resolveDefaultLogsDir,
   resolvePaperclipInstanceId,
 } from "../config/home.js";
-import { printPaperclipCliBanner } from "../utils/banner.js";
+import { printOpenSoulCliBanner } from "../utils/banner.js";
 
 type Section = "llm" | "database" | "logging" | "server" | "storage" | "secrets";
 
@@ -39,7 +39,7 @@ function defaultConfig(): PaperclipConfig {
     database: {
       mode: "embedded-postgres",
       embeddedPostgresDataDir: resolveDefaultEmbeddedPostgresDir(instanceId),
-      embeddedPostgresPort: 54329,
+      embeddedPostgresPort: 54330,
       backup: {
         enabled: true,
         intervalMinutes: 60,
@@ -55,13 +55,12 @@ function defaultConfig(): PaperclipConfig {
       deploymentMode: "local_trusted",
       exposure: "private",
       host: "127.0.0.1",
-      port: 3100,
+      port: 3200,
       allowedHostnames: [],
       serveUi: true,
     },
     auth: {
       baseUrlMode: "auto",
-      disableSignUp: false,
     },
     storage: defaultStorageConfig(),
     secrets: defaultSecretsConfig(),
@@ -72,12 +71,12 @@ export async function configure(opts: {
   config?: string;
   section?: string;
 }): Promise<void> {
-  printPaperclipCliBanner();
-  p.intro(pc.bgCyan(pc.black(" paperclip configure ")));
+  printOpenSoulCliBanner();
+  p.intro(pc.bgCyan(pc.black(" opensoul configure ")));
   const configPath = resolveConfigPath(opts.config);
 
   if (!configExists(opts.config)) {
-    p.log.error("No config file found. Run `paperclipai onboard` first.");
+    p.log.error("No config file found. Run `opensoulai onboard` first.");
     p.outro("");
     return;
   }

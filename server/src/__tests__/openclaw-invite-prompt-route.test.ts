@@ -83,7 +83,7 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
     mockLogActivity.mockResolvedValue(undefined);
   });
 
-  it("rejects non-CEO agent callers", async () => {
+  it("rejects non-Director agent callers", async () => {
     const db = createDbStub();
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
@@ -105,15 +105,15 @@ describe("POST /companies/:companyId/openclaw/invite-prompt", () => {
       .send({});
 
     expect(res.status).toBe(403);
-    expect(res.body.error).toContain("Only CEO agents");
+    expect(res.body.error).toContain("Only Director agents");
   });
 
-  it("allows CEO agent callers and creates an agent-only invite", async () => {
+  it("allows Director agent callers and creates an agent-only invite", async () => {
     const db = createDbStub();
     mockAgentService.getById.mockResolvedValue({
       id: "agent-1",
       companyId: "company-1",
-      role: "ceo",
+      role: "director",
     });
     const app = createApp(
       {

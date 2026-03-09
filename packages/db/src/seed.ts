@@ -6,44 +6,104 @@ if (!url) throw new Error("DATABASE_URL is required");
 
 const db = createDb(url);
 
-console.log("Seeding database...");
+console.log("Seeding opensoul marketing agency...");
 
 const [company] = await db
   .insert(companies)
   .values({
-    name: "Paperclip Demo Co",
-    description: "A demo autonomous company",
+    name: "opensoul agency",
+    description: "An autonomous AI marketing agency",
     status: "active",
     budgetMonthlyCents: 50000,
   })
   .returning();
 
-const [ceo] = await db
+const [director] = await db
   .insert(agents)
   .values({
     companyId: company!.id,
-    name: "CEO Agent",
-    role: "ceo",
-    title: "Chief Executive Officer",
+    name: "Director",
+    role: "director",
+    title: "Marketing Director",
     status: "idle",
-    adapterType: "process",
-    adapterConfig: { command: "echo", args: ["hello from ceo"] },
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
     budgetMonthlyCents: 15000,
   })
   .returning();
 
-const [engineer] = await db
+const [strategist] = await db
   .insert(agents)
   .values({
     companyId: company!.id,
-    name: "Engineer Agent",
-    role: "engineer",
-    title: "Software Engineer",
+    name: "Strategist",
+    role: "strategist",
+    title: "Marketing Strategist",
     status: "idle",
-    reportsTo: ceo!.id,
-    adapterType: "process",
-    adapterConfig: { command: "echo", args: ["hello from engineer"] },
-    budgetMonthlyCents: 10000,
+    reportsTo: director!.id,
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
+    budgetMonthlyCents: 8000,
+  })
+  .returning();
+
+const [producer] = await db
+  .insert(agents)
+  .values({
+    companyId: company!.id,
+    name: "Producer",
+    role: "producer",
+    title: "Content Producer",
+    status: "idle",
+    reportsTo: director!.id,
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
+    budgetMonthlyCents: 8000,
+  })
+  .returning();
+
+const [creative] = await db
+  .insert(agents)
+  .values({
+    companyId: company!.id,
+    name: "Creative",
+    role: "creative",
+    title: "Creative Lead",
+    status: "idle",
+    reportsTo: director!.id,
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
+    budgetMonthlyCents: 8000,
+  })
+  .returning();
+
+const [growth] = await db
+  .insert(agents)
+  .values({
+    companyId: company!.id,
+    name: "Growth Marketer",
+    role: "growth_marketer",
+    title: "Growth & Acquisition Lead",
+    status: "idle",
+    reportsTo: director!.id,
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
+    budgetMonthlyCents: 8000,
+  })
+  .returning();
+
+const [analyst] = await db
+  .insert(agents)
+  .values({
+    companyId: company!.id,
+    name: "Analyst",
+    role: "analyst",
+    title: "Marketing Analyst",
+    status: "idle",
+    reportsTo: director!.id,
+    adapterType: "claude_local",
+    adapterConfig: { command: "claude" },
+    budgetMonthlyCents: 5000,
   })
   .returning();
 
@@ -51,11 +111,11 @@ const [goal] = await db
   .insert(goals)
   .values({
     companyId: company!.id,
-    title: "Ship V1",
-    description: "Deliver first control plane release",
+    title: "Launch Campaign",
+    description: "Plan and execute go-to-market campaign",
     level: "company",
     status: "active",
-    ownerAgentId: ceo!.id,
+    ownerAgentId: director!.id,
   })
   .returning();
 
@@ -64,10 +124,10 @@ const [project] = await db
   .values({
     companyId: company!.id,
     goalId: goal!.id,
-    name: "Control Plane MVP",
-    description: "Implement core board + agent loop",
+    name: "Q1 Go-to-Market",
+    description: "Full-funnel launch campaign",
     status: "in_progress",
-    leadAgentId: ceo!.id,
+    leadAgentId: director!.id,
   })
   .returning();
 
@@ -76,24 +136,36 @@ await db.insert(issues).values([
     companyId: company!.id,
     projectId: project!.id,
     goalId: goal!.id,
-    title: "Implement atomic task checkout",
-    description: "Ensure in_progress claiming is conflict-safe",
+    title: "Competitive landscape analysis",
+    description: "Research top 5 competitors and identify positioning gaps",
     status: "todo",
     priority: "high",
-    assigneeAgentId: engineer!.id,
-    createdByAgentId: ceo!.id,
+    assigneeAgentId: strategist!.id,
+    createdByAgentId: director!.id,
   },
   {
     companyId: company!.id,
     projectId: project!.id,
     goalId: goal!.id,
-    title: "Add budget auto-pause",
-    description: "Pause agent at hard budget ceiling",
+    title: "Brand messaging framework",
+    description: "Define value props, voice, and key messaging for launch",
+    status: "todo",
+    priority: "high",
+    assigneeAgentId: creative!.id,
+    createdByAgentId: director!.id,
+  },
+  {
+    companyId: company!.id,
+    projectId: project!.id,
+    goalId: goal!.id,
+    title: "SEO keyword strategy",
+    description: "Identify high-intent keywords and content plan for organic growth",
     status: "backlog",
     priority: "medium",
-    createdByAgentId: ceo!.id,
+    assigneeAgentId: growth!.id,
+    createdByAgentId: director!.id,
   },
 ]);
 
-console.log("Seed complete");
+console.log("Seed complete — opensoul agency ready");
 process.exit(0);

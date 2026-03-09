@@ -29,7 +29,7 @@ interface ProjectPropertiesProps {
   onUpdate?: (data: Record<string, unknown>) => void;
 }
 
-const REPO_ONLY_CWD_SENTINEL = "/__paperclip_repo_only__";
+const REPO_ONLY_CWD_SENTINEL = "/__opensoul_repo_only__";
 
 function PropertyRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (

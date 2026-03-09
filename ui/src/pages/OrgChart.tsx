@@ -10,7 +10,7 @@ import { EmptyState } from "../components/EmptyState";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { AgentIcon } from "../components/AgentIconPicker";
 import { Network } from "lucide-react";
-import { AGENT_ROLE_LABELS, type Agent } from "@paperclipai/shared";
+import type { Agent } from "@paperclipai/shared";
 
 // Layout constants
 const CARD_W = 200;
@@ -421,7 +421,11 @@ export function OrgChart() {
   );
 }
 
-const roleLabels = AGENT_ROLE_LABELS as Record<string, string>;
+const roleLabels: Record<string, string> = {
+  director: "Director", strategist: "Strategist", producer: "Producer",
+  creative: "Creative", growth_marketer: "Growth Marketer", analyst: "Analyst",
+  general: "General",
+};
 
 function roleLabel(role: string): string {
   return roleLabels[role] ?? role;

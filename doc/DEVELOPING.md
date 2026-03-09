@@ -34,7 +34,7 @@ pnpm dev
 
 This starts:
 
-- API server: `http://localhost:3100`
+- API server: `http://localhost:3200`
 - UI: served by the API server in dev middleware mode (same origin as API)
 
 `pnpm dev` runs the server in watch mode and restarts on changes from workspace packages (including adapter packages). Use `pnpm dev:once` to run without file watching.
@@ -74,7 +74,7 @@ Build and run Paperclip in Docker:
 ```sh
 docker build -t paperclip-local .
 docker run --name paperclip \
-  -p 3100:3100 \
+  -p 3200:3200 \
   -e HOST=0.0.0.0 \
   -e PAPERCLIP_HOME=/paperclip \
   -v "$(pwd)/data/docker-paperclip:/paperclip" \
@@ -129,8 +129,8 @@ This path honors `PAPERCLIP_HOME` and `PAPERCLIP_INSTANCE_ID` in non-default set
 In another terminal:
 
 ```sh
-curl http://localhost:3100/api/health
-curl http://localhost:3100/api/companies
+curl http://localhost:3200/api/health
+curl http://localhost:3200/api/companies
 ```
 
 Expected:
@@ -238,7 +238,7 @@ pnpm paperclipai issue update <issue-id> --status in_progress --comment "Started
 Set defaults once with context profiles:
 
 ```sh
-pnpm paperclipai context set --api-base http://localhost:3100 --company-id <company-id>
+pnpm paperclipai context set --api-base http://localhost:3200 --company-id <company-id>
 ```
 
 Then run commands without repeating flags:

@@ -27,19 +27,28 @@ if (process.env.npm_config_authenticated_private === "true") {
   tailscaleAuth = true;
 }
 
+// Strip inherited PAPERCLIP_* env vars so opensoul uses its own config/db,
+// not a parent paperclip process's directories.
+const cleanEnv = { ...process.env };
+for (const key of Object.keys(cleanEnv)) {
+  if (key.startsWith("PAPERCLIP_")) {
+    delete cleanEnv[key];
+  }
+}
+
 const env = {
-  ...process.env,
-  PAPERCLIP_UI_DEV_MIDDLEWARE: "true",
+  ...cleanEnv,
+  OPENSOUL_UI_DEV_MIDDLEWARE: "true",
 };
 
 if (tailscaleAuth) {
-  env.PAPERCLIP_DEPLOYMENT_MODE = "authenticated";
-  env.PAPERCLIP_DEPLOYMENT_EXPOSURE = "private";
-  env.PAPERCLIP_AUTH_BASE_URL_MODE = "auto";
+  env.OPENSOUL_DEPLOYMENT_MODE = "authenticated";
+  env.OPENSOUL_DEPLOYMENT_EXPOSURE = "private";
+  env.OPENSOUL_AUTH_BASE_URL_MODE = "auto";
   env.HOST = "0.0.0.0";
-  console.log("[paperclip] dev mode: authenticated/private (tailscale-friendly) on 0.0.0.0");
+  console.log("[opensoul] dev mode: authenticated/private (tailscale-friendly) on 0.0.0.0");
 } else {
-  console.log("[paperclip] dev mode: local_trusted (default)");
+  console.log("[opensoul] dev mode: local_trusted (default)");
 }
 
 const pnpmBin = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
@@ -47,7 +56,7 @@ const serverScript = mode === "watch" ? "dev:watch" : "dev";
 const child = spawn(
   pnpmBin,
   ["--filter", "@paperclipai/server", serverScript, ...forwardedArgs],
-  { stdio: "inherit", env, shell: process.platform === "win32" },
+  { stdio: "inherit", env },
 );
 
 child.on("exit", (code, signal) => {

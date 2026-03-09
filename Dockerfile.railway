@@ -1,0 +1,42 @@
+# Railway Dockerfile - Simplified approach
+FROM node:20-bookworm-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates curl git \
+  && rm -rf /var/lib/apt/lists/*
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+
+WORKDIR /app
+
+# Copy everything first (simpler than trying to copy individual package.json files)
+COPY . .
+
+# Install dependencies
+RUN pnpm install --no-frozen-lockfile
+
+# Create user and set up directories
+RUN addgroup -g 1001 -S paperclip && \
+    adduser -S -D -H -u 1001 -s /sbin/nologin -G paperclip paperclip && \
+    mkdir -p /paperclip/instances/default && \
+    chown -R paperclip:paperclip /paperclip /app
+
+USER paperclip
+
+ENV NODE_ENV=production \
+  DATABASE_URL="${DATABASE_URL}" \
+  PORT=3200 \
+  HOST=0.0.0.0 \
+  SERVE_UI=true \
+  HOME=/paperclip \
+  PAPERCLIP_HOME=/paperclip \
+  PAPERCLIP_INSTANCE_ID=default \
+  PAPERCLIP_DEPLOYMENT_MODE=authenticated \
+  PAPERCLIP_DEPLOYMENT_EXPOSURE=public
+
+EXPOSE 3200
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3200/api/health || exit 1
+
+# Use tsx to run TypeScript files directly
+CMD ["npx", "tsx", "server/src/index.ts"]
