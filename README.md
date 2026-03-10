@@ -21,16 +21,16 @@
 
 **opensoul is a pre-configured [Paperclip](https://github.com/WeAreBini/paperclip) deployment built specifically for marketing agencies.**
 
-It's a full agentic marketing stack — a team of AI agents organized as a marketing agency, with a Director at the top coordinating strategy, creative, production, growth, and analytics.
+It's a full agentic marketing stack. A team of AI agents organized as a real marketing agency. Director at the top. Strategy, creative, production, growth, and analytics below.
 
-Bring your own AI agents (Claude Code, Codex, Cursor, OpenClaw), assign marketing goals, and watch your agency execute campaigns, create content, optimize funnels, and grow your brand — all from one dashboard.
+Bring your own AI agents. Claude Code, Codex, Cursor, OpenClaw. Assign marketing goals. Watch your agency execute campaigns, create content, optimize funnels, and grow your brand. All from one dashboard.
 
 **Manage marketing outcomes, not individual prompts.**
 
 |        | Step              | Example                                                                          |
 | ------ | ----------------- | -------------------------------------------------------------------------------- |
 | **01** | Set the objective | _"Launch product X to 10K signups in 90 days."_                                  |
-| **02** | Staff the agency  | Director, Strategist, Producer, Creative, Growth Marketer, Analyst — all AI agents. |
+| **02** | Staff the agency  | Director, Strategist, Producer, Creative, Growth Marketer, Analyst. All AI agents. |
 | **03** | Let them execute  | Review strategy. Approve campaigns. Monitor performance from the dashboard.       |
 
 <br/>
@@ -48,14 +48,14 @@ opensoul comes pre-configured with six marketing roles:
 | **Growth Marketer** | SEO, paid acquisition, conversion optimization, analytics, A/B testing, funnel optimization |
 | **Analyst** | Performance measurement, attribution, reporting, data-driven recommendations, ROI analysis |
 
-Each agent runs autonomously on scheduled heartbeats, checks their work queue, executes tasks, and reports progress — just like a real marketing team.
+Each agent runs autonomously on scheduled heartbeats. They check their work queue, execute tasks, and report progress. Just like a real marketing team.
 
 <br/>
 
 ## opensoul is right for you if
 
 - You want an **autonomous AI marketing agency** working 24/7
-- You need to **coordinate marketing across channels** — content, paid, SEO, social — with AI agents
+- You need to **coordinate marketing across channels** (content, paid, SEO, social) with AI agents
 - You want **marketing strategy and execution**, not just content generation
 - You want to **monitor marketing spend** and enforce budgets across your agency
 - You want a **structured marketing org** with clear roles, not a pile of disconnected prompts
@@ -71,7 +71,7 @@ opensoul inherits all of Paperclip's orchestration capabilities, tuned for marke
 <tr>
 <td align="center" width="33%">
 <h3>Marketing Org Chart</h3>
-Director, Strategist, Creative, Producer, Growth, Analyst — a real agency structure with reporting lines and delegation.
+Director, Strategist, Creative, Producer, Growth, Analyst. A real agency structure with reporting lines and delegation.
 </td>
 <td align="center" width="33%">
 <h3>Goal-Driven Campaigns</h3>
@@ -89,11 +89,11 @@ Monthly budgets per agent. Track spend across your marketing team. No runaway co
 </td>
 <td align="center">
 <h3>Campaign Governance</h3>
-You're the client. Approve strategies, review creative, pause or redirect any agent — at any time.
+You're the client. Approve strategies. Review creative. Pause or redirect any agent at any time.
 </td>
 <td align="center">
 <h3>Full Audit Trail</h3>
-Every decision, every draft, every revision — traced and explained. Complete campaign accountability.
+Every decision, every draft, every revision. Traced and explained. Complete campaign accountability.
 </td>
 </tr>
 </table>
@@ -109,7 +109,7 @@ pnpm install
 pnpm dev
 ```
 
-This starts the API server at `http://localhost:3200`. An embedded PostgreSQL database is created automatically — no setup required.
+This starts the API server at `http://localhost:3200`. An embedded PostgreSQL database is created automatically. No setup required.
 
 > **Requirements:** Node.js 20+, pnpm 9.15+
 
@@ -117,13 +117,13 @@ This starts the API server at `http://localhost:3200`. An embedded PostgreSQL da
 
 ## How It Works
 
-opensoul is built on [Paperclip](https://github.com/WeAreBini/paperclip), the open-source orchestration platform for AI agent companies. Everything Paperclip can do, opensoul can do — it's just pre-configured for marketing.
+opensoul is built on [Paperclip](https://github.com/WeAreBini/paperclip), the open-source orchestration platform for AI agent companies. Everything Paperclip can do, opensoul can do. It's just pre-configured for marketing.
 
-- **Heartbeats** — Agents wake on a schedule, check their work, and act
-- **Delegation** — The Director breaks strategy into tasks and assigns them down the org chart
-- **Governance** — You approve strategies, review output, and set budgets
-- **Cost tracking** — Monitor token spend across your marketing team
-- **Multi-channel** — Agents can use any tools: Claude Code, Codex, Cursor, OpenClaw, HTTP APIs
+- **Heartbeats**: Agents wake on a schedule, check their work, and act
+- **Delegation**: The Director breaks strategy into tasks and assigns them down the org chart
+- **Governance**: You approve strategies, review output, and set budgets
+- **Cost tracking**: Monitor token spend across your marketing team
+- **Multi-channel**: Agents can use any tools. Claude Code, Codex, Cursor, OpenClaw, HTTP APIs
 
 <br/>
 
