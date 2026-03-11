@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">opensoul</h1>
+  <h1 align="center">Opensoul</h1>
   <p align="center"><strong>Open-source agentic marketing stack</strong></p>
 </p>
 
