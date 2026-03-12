@@ -24,6 +24,7 @@ import { sidebarBadgeRoutes } from "./routes/sidebar-badges.js";
 import { llmRoutes } from "./routes/llms.js";
 import { assetRoutes } from "./routes/assets.js";
 import { accessRoutes } from "./routes/access.js";
+import { subscriptionRoutes, stripeWebhookRoute } from "./routes/subscriptions.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 
 type UiMode = "none" | "static" | "vite-dev";
@@ -44,6 +45,36 @@ export async function createApp(
   },
 ) {
   const app = express();
+
+  // --- SoulSquad: CORS for cross-domain auth with Vercel frontend ---
+  const frontendUrl = process.env.SOULSQUAD_FRONTEND_URL;
+  if (frontendUrl) {
+    app.use((req, res, next) => {
+      const origin = req.headers.origin;
+      if (origin && (origin === frontendUrl || origin.endsWith(".vercel.app"))) {
+        res.setHeader("Access-Control-Allow-Origin", origin);
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader(
+          "Access-Control-Allow-Methods",
+          "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+        );
+        res.setHeader(
+          "Access-Control-Allow-Headers",
+          "Content-Type, Authorization, Cookie",
+        );
+        if (req.method === "OPTIONS") {
+          res.status(204).end();
+          return;
+        }
+      }
+      next();
+    });
+  }
+
+  // --- SoulSquad: Stripe webhook needs raw body, mount before express.json() ---
+  if (process.env.STRIPE_SECRET_KEY) {
+    app.use("/api", express.raw({ type: "application/json" }), stripeWebhookRoute(db));
+  }
 
   app.use(express.json());
   app.use(httpLogger);
@@ -120,6 +151,11 @@ export async function createApp(
       allowedHostnames: opts.allowedHostnames,
     }),
   );
+  // --- SoulSquad: Subscription management routes ---
+  if (process.env.STRIPE_SECRET_KEY) {
+    api.use(subscriptionRoutes(db));
+  }
+
   app.use("/api", api);
   app.use("/api", (_req, res) => {
     res.status(404).json({ error: "API route not found" });

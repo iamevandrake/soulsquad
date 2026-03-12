@@ -53,6 +53,17 @@ export function deriveAuthTrustedOrigins(config: Config): string[] {
       // Better Auth will surface invalid base URL separately.
     }
   }
+
+  // Trust the SoulSquad frontend origin for cross-domain auth
+  const frontendUrl = process.env.SOULSQUAD_FRONTEND_URL;
+  if (frontendUrl) {
+    try {
+      trustedOrigins.add(new URL(frontendUrl).origin);
+    } catch {
+      // ignore invalid URL
+    }
+  }
+
   if (config.deploymentMode === "authenticated") {
     for (const hostname of config.allowedHostnames) {
       const trimmed = hostname.trim().toLowerCase();
@@ -70,7 +81,20 @@ export function createBetterAuthInstance(db: Db, config: Config, trustedOrigins?
   const secret = process.env.BETTER_AUTH_SECRET ?? process.env.PAPERCLIP_AGENT_JWT_SECRET ?? "paperclip-dev-secret";
   const effectiveTrustedOrigins = trustedOrigins ?? deriveAuthTrustedOrigins(config);
 
-  const authConfig = {
+  // Google OAuth credentials for hosted SoulSquad
+  const googleClientId = process.env.GOOGLE_CLIENT_ID;
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  const socialProviders: Record<string, unknown> = {};
+  if (googleClientId && googleClientSecret) {
+    socialProviders.google = {
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+      redirectURI: `${baseUrl ?? ""}/api/auth/callback/google`,
+    };
+  }
+
+  const authConfig: Record<string, unknown> = {
     baseURL: baseUrl,
     secret,
     trustedOrigins: effectiveTrustedOrigins,
@@ -87,13 +111,20 @@ export function createBetterAuthInstance(db: Db, config: Config, trustedOrigins?
       enabled: true,
       requireEmailVerification: false,
     },
+    socialProviders,
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 60 * 5,
+      },
+    },
   };
 
   if (!baseUrl) {
-    delete (authConfig as { baseURL?: string }).baseURL;
+    delete authConfig.baseURL;
   }
 
-  return betterAuth(authConfig);
+  return betterAuth(authConfig as Parameters<typeof betterAuth>[0]);
 }
 
 export function createBetterAuthHandler(auth: BetterAuthInstance): RequestHandler {
