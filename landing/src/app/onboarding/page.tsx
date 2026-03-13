@@ -5,63 +5,59 @@ import { config } from "@/lib/config";
 import {
   ArrowRight,
   ArrowLeft,
-  Target,
+  Users,
   Key,
   Rocket,
   Check,
   Loader2,
 } from "lucide-react";
 
-type Step = "goal" | "apikey" | "launch";
+type Step = "template" | "apikey" | "launch";
 
-const MARKETING_GOALS = [
+const TEMPLATES = [
   {
-    id: "launch",
-    title: "Product launch",
-    description: "Launch a product to market with a coordinated campaign",
+    id: "launch-campaign",
+    name: "Launch Campaign",
+    description: "Plan and execute a go-to-market campaign with a focused 4-agent team.",
+    agentCount: 4,
+    agents: ["Director", "Strategist", "Creative", "Growth Marketer"],
   },
   {
-    id: "content",
-    title: "Content engine",
-    description: "Build a content machine that drives organic traffic",
+    id: "content-engine",
+    name: "Content Engine",
+    description: "Build a content machine that drives organic traffic with a 3-agent team.",
+    agentCount: 3,
+    agents: ["Producer", "Creative", "Analyst"],
   },
   {
-    id: "growth",
-    title: "Growth & acquisition",
-    description: "Optimize funnels and scale paid + organic acquisition",
-  },
-  {
-    id: "brand",
-    title: "Brand building",
-    description: "Establish brand voice, positioning, and market presence",
-  },
-  {
-    id: "custom",
-    title: "Custom objective",
-    description: "Define your own marketing objective",
+    id: "full-agency",
+    name: "Full Agency",
+    description: "The complete AI marketing agency with all 6 specialist agents.",
+    agentCount: 6,
+    agents: ["Director", "Strategist", "Producer", "Creative", "Growth Marketer", "Analyst"],
   },
 ];
 
+const STEPS: Step[] = ["template", "apikey", "launch"];
+
 export default function OnboardingPage() {
-  const [step, setStep] = useState<Step>("goal");
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-  const [customGoal, setCustomGoal] = useState("");
+  const [step, setStep] = useState<Step>("template");
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [isLaunching, setIsLaunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const goalText =
-    selectedGoal === "custom"
-      ? customGoal
-      : MARKETING_GOALS.find((g) => g.id === selectedGoal)?.title ?? "";
+  const template = TEMPLATES.find((t) => t.id === selectedTemplate);
+  const stepIndex = STEPS.indexOf(step);
 
   async function handleLaunch() {
+    if (!selectedTemplate) return;
     setIsLaunching(true);
     setError(null);
 
     try {
-      // 1. Create the company in opensoul
+      // 1. Create the company
       const companyRes = await fetch(`${config.apiUrl}/api/companies`, {
         method: "POST",
         credentials: "include",
@@ -92,18 +88,30 @@ export default function OnboardingPage() {
         });
       }
 
-      // 3. Create a default project with the goal
+      // 3. Seed agent team from selected template
+      const seedRes = await fetch(`${config.apiUrl}/api/companies/${companyId}/seed-template`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId: selectedTemplate }),
+      });
+
+      if (!seedRes.ok) {
+        throw new Error("Failed to create agent team");
+      }
+
+      // 4. Create a default project
       await fetch(`${config.apiUrl}/api/companies/${companyId}/projects`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: goalText || "Marketing Campaign",
-          description: `Goal: ${goalText}`,
+          name: template?.name || "Marketing Campaign",
+          description: `Agent team: ${template?.name}`,
         }),
       });
 
-      // 4. Redirect to the opensoul dashboard
+      // 5. Redirect to the dashboard
       window.location.href = `${config.apiUrl}`;
     } catch (err) {
       setError(
@@ -118,76 +126,77 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg">
         {/* Progress */}
         <div className="mb-8 flex items-center justify-center gap-2">
-          {(["goal", "apikey", "launch"] as Step[]).map((s, i) => (
+          {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium ${
                   s === step
                     ? "bg-brand-600 text-white"
-                    : (["goal", "apikey", "launch"].indexOf(step) > i
+                    : stepIndex > i
                       ? "bg-brand-600/20 text-brand-400"
-                      : "bg-white/5 text-white/30")
+                      : "bg-white/5 text-white/30"
                 }`}
               >
-                {["goal", "apikey", "launch"].indexOf(step) > i ? (
-                  <Check size={14} />
-                ) : (
-                  i + 1
-                )}
+                {stepIndex > i ? <Check size={14} /> : i + 1}
               </div>
-              {i < 2 && (
+              {i < STEPS.length - 1 && (
                 <div className="h-px w-12 bg-white/10" />
               )}
             </div>
           ))}
         </div>
 
-        {/* Step 1: Goal */}
-        {step === "goal" && (
+        {/* Step 1: Pick template */}
+        {step === "template" && (
           <div>
             <div className="mb-2 flex items-center gap-2 text-brand-400">
-              <Target size={18} />
+              <Users size={18} />
               <span className="text-sm font-medium">Step 1</span>
             </div>
             <h1 className="text-2xl font-bold">
-              What's your marketing objective?
+              Pick your agent team
             </h1>
             <p className="mt-2 text-white/40">
-              This helps your AI team know where to focus.
+              Choose a pre-built team of AI agents for your marketing needs.
             </p>
 
             <div className="mt-8 space-y-3">
-              {MARKETING_GOALS.map((goal) => (
+              {TEMPLATES.map((t) => (
                 <button
-                  key={goal.id}
-                  onClick={() => setSelectedGoal(goal.id)}
+                  key={t.id}
+                  onClick={() => setSelectedTemplate(t.id)}
                   className={`w-full rounded-xl border p-4 text-left transition-all ${
-                    selectedGoal === goal.id
+                    selectedTemplate === t.id
                       ? "border-brand-500/50 bg-brand-600/10"
                       : "border-white/5 bg-white/[0.02] hover:border-white/10"
                   }`}
                 >
-                  <div className="font-medium">{goal.title}</div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t.name}</span>
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-xs text-white/40">
+                      {t.agentCount} agents
+                    </span>
+                  </div>
                   <div className="mt-1 text-sm text-white/40">
-                    {goal.description}
+                    {t.description}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {t.agents.map((a) => (
+                      <span
+                        key={a}
+                        className="rounded-md bg-white/5 px-2 py-0.5 text-xs text-white/50"
+                      >
+                        {a}
+                      </span>
+                    ))}
                   </div>
                 </button>
               ))}
             </div>
 
-            {selectedGoal === "custom" && (
-              <textarea
-                value={customGoal}
-                onChange={(e) => setCustomGoal(e.target.value)}
-                placeholder="Describe your marketing objective..."
-                className="mt-4 w-full rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 text-white placeholder-white/30 focus:border-brand-500/50 focus:outline-none"
-                rows={3}
-              />
-            )}
-
             <button
               onClick={() => setStep("apikey")}
-              disabled={!selectedGoal || (selectedGoal === "custom" && !customGoal)}
+              disabled={!selectedTemplate}
               className="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 font-medium text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-brand-500 transition-colors"
             >
               Continue
@@ -251,7 +260,7 @@ export default function OnboardingPage() {
 
             <div className="mt-8 flex gap-3">
               <button
-                onClick={() => setStep("goal")}
+                onClick={() => setStep("template")}
                 className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 hover:border-white/20 transition-colors"
               >
                 <ArrowLeft size={16} />
@@ -287,8 +296,12 @@ export default function OnboardingPage() {
                   <span className="font-medium">{companyName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/40">Objective</span>
-                  <span className="font-medium">{goalText}</span>
+                  <span className="text-white/40">Team template</span>
+                  <span className="font-medium">{template?.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/40">Agents</span>
+                  <span className="font-medium">{template?.agentCount}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/40">API key</span>
@@ -299,7 +312,7 @@ export default function OnboardingPage() {
                 <div className="flex justify-between">
                   <span className="text-white/40">Plan</span>
                   <span className="font-medium text-brand-400">
-                    Free (1 project, 3 agents)
+                    Free (1 project, {template?.agentCount} agents)
                   </span>
                 </div>
               </div>
