@@ -1,6 +1,6 @@
 {
-  "name": "opensoul",
-  "description": "Open-source agentic marketing stack — a pre-configured Paperclip deployment for marketing agencies",
+  "name": "soulsquad",
+  "description": "AI marketing agency platform — sign in, pick a team, and let AI agents run your marketing",
   "author": "Simhasana LLC",
   "private": true,
   "type": "module",

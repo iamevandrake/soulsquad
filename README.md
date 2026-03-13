@@ -1,91 +1,71 @@
 <p align="center">
-  <h1 align="center">Opensoul</h1>
-  <p align="center"><strong>Open-source agentic marketing stack</strong></p>
+  <h1 align="center">Soulsquad</h1>
+  <p align="center"><strong>AI marketing agency platform</strong></p>
 </p>
 
 <p align="center">
   <a href="#quickstart"><strong>Quickstart</strong></a> &middot;
-  <a href="https://github.com/iamevandrake/opensoul"><strong>GitHub</strong></a>
+  <a href="https://github.com/iamevandrake/soulsquad"><strong>GitHub</strong></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/iamevandrake/opensoul/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a>
-  <a href="https://github.com/iamevandrake/opensoul/stargazers"><img src="https://img.shields.io/github/stars/iamevandrake/opensoul?style=flat" alt="Stars" /></a>
+  <a href="https://github.com/iamevandrake/soulsquad/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a>
+  <a href="https://github.com/iamevandrake/soulsquad/stargazers"><img src="https://img.shields.io/github/stars/iamevandrake/soulsquad?style=flat" alt="Stars" /></a>
 </p>
 
 <br/>
 
-## What is opensoul?
+## What is Soulsquad?
 
-# An AI marketing agency that runs itself
+# Your AI marketing team, ready to go
 
-**opensoul is a pre-configured [Paperclip](https://github.com/WeAreBini/paperclip) deployment built specifically for marketing agencies.**
+**Soulsquad is a consumer-friendly marketing platform powered by AI agents.** Sign in with Google, pick an agent team template, bring your own API key, and let your AI marketing squad handle the rest.
 
-It's a full agentic marketing stack. A team of AI agents organized as a real marketing agency. Director at the top. Strategy, creative, production, growth, and analytics below.
-
-Bring your own AI agents. Claude Code, Codex, Cursor, OpenClaw. Assign marketing goals. Watch your agency execute campaigns, create content, optimize funnels, and grow your brand. All from one dashboard.
-
-**Manage marketing outcomes, not individual prompts.**
+Built on [opensoul](https://github.com/iamevandrake/opensoul) (the open-source agentic marketing stack) and [Paperclip](https://github.com/WeAreBini/paperclip).
 
 |        | Step              | Example                                                                          |
 | ------ | ----------------- | -------------------------------------------------------------------------------- |
-| **01** | Set the objective | _"Launch product X to 10K signups in 90 days."_                                  |
-| **02** | Staff the agency  | Director, Strategist, Producer, Creative, Growth Marketer, Analyst. All AI agents. |
-| **03** | Let them execute  | Review strategy. Approve campaigns. Monitor performance from the dashboard.       |
+| **01** | Sign in           | Google OAuth — one click to get started                                           |
+| **02** | Pick your squad   | Choose a pre-built team: Launch Campaign, Content Engine, or Full Agency          |
+| **03** | Watch them work   | Your AI agents execute campaigns, create content, and grow your brand             |
 
 <br/>
 
-## The Marketing Team
+## Agent Team Templates
 
-opensoul comes pre-configured with six marketing roles:
+Soulsquad comes with pre-built agent team templates:
 
-| Role | Responsibilities |
-| --- | --- |
-| **Director** | Overall marketing strategy, budget allocation, team coordination, performance reporting |
-| **Strategist** | Market research, competitive analysis, positioning, campaign planning, audience segmentation |
-| **Producer** | Content production, asset creation, publishing workflows, editorial calendar |
-| **Creative** | Brand voice, copy, visual direction, content strategy, messaging frameworks |
-| **Growth Marketer** | SEO, paid acquisition, conversion optimization, analytics, A/B testing, funnel optimization |
-| **Analyst** | Performance measurement, attribution, reporting, data-driven recommendations, ROI analysis |
+| Template | Agents | Best For |
+| --- | --- | --- |
+| **Launch Campaign** | 4 agents | Product launches, campaign sprints |
+| **Content Engine** | 3 agents | Ongoing content production |
+| **Full Agency** | 6 agents | Complete marketing operations |
 
-Each agent runs autonomously on scheduled heartbeats. They check their work queue, execute tasks, and report progress. Just like a real marketing team.
-
-<br/>
-
-## opensoul is right for you if
-
-- You want an **autonomous AI marketing agency** working 24/7
-- You need to **coordinate marketing across channels** (content, paid, SEO, social) with AI agents
-- You want **marketing strategy and execution**, not just content generation
-- You want to **monitor marketing spend** and enforce budgets across your agency
-- You want a **structured marketing org** with clear roles, not a pile of disconnected prompts
-- You want to manage your marketing operations **from your phone**
+Each agent runs autonomously on scheduled heartbeats. They check their work queue, execute tasks, and report progress.
 
 <br/>
 
 ## Features
 
-opensoul inherits all of Paperclip's orchestration capabilities, tuned for marketing:
-
 <table>
 <tr>
 <td align="center" width="33%">
-<h3>Marketing Org Chart</h3>
-Director, Strategist, Creative, Producer, Growth, Analyst. A real agency structure with reporting lines and delegation.
+<h3>One-Click Setup</h3>
+Sign in with Google. Pick a template. Enter your API key. Your marketing team is live in minutes.
 </td>
 <td align="center" width="33%">
-<h3>Goal-Driven Campaigns</h3>
-Every task traces back to marketing objectives. Agents know <em>what</em> to create and <em>why</em> it matters.
+<h3>BYOK (Bring Your Own Key)</h3>
+Use your own Anthropic API key. You control costs. No markup on AI usage.
 </td>
 <td align="center" width="33%">
-<h3>Autonomous Execution</h3>
-Agents wake on schedule, check their queue, produce work, and hand off to the next team member.
+<h3>Pre-Built Teams</h3>
+Choose from curated agent team templates designed for common marketing workflows.
 </td>
 </tr>
 <tr>
 <td align="center">
-<h3>Budget Control</h3>
-Monthly budgets per agent. Track spend across your marketing team. No runaway costs.
+<h3>Autonomous Execution</h3>
+Agents wake on schedule, check their queue, produce work, and hand off to the next team member.
 </td>
 <td align="center">
 <h3>Campaign Governance</h3>
@@ -103,8 +83,8 @@ Every decision, every draft, every revision. Traced and explained. Complete camp
 ## Quickstart
 
 ```bash
-git clone https://github.com/iamevandrake/opensoul.git
-cd opensoul
+git clone https://github.com/iamevandrake/soulsquad.git
+cd soulsquad
 pnpm install
 pnpm dev
 ```
@@ -112,18 +92,6 @@ pnpm dev
 This starts the API server at `http://localhost:3200`. An embedded PostgreSQL database is created automatically. No setup required.
 
 > **Requirements:** Node.js 20+, pnpm 9.15+
-
-<br/>
-
-## How It Works
-
-opensoul is built on [Paperclip](https://github.com/WeAreBini/paperclip), the open-source orchestration platform for AI agent companies. Everything Paperclip can do, opensoul can do. It's just pre-configured for marketing.
-
-- **Heartbeats**: Agents wake on a schedule, check their work, and act
-- **Delegation**: The Director breaks strategy into tasks and assigns them down the org chart
-- **Governance**: You approve strategies, review output, and set budgets
-- **Cost tracking**: Monitor token spend across your marketing team
-- **Multi-channel**: Agents can use any tools. Claude Code, Codex, Cursor, OpenClaw, HTTP APIs
 
 <br/>
 
@@ -139,6 +107,17 @@ pnpm test:run         # Run tests
 
 <br/>
 
+## Architecture
+
+Soulsquad is built on [opensoul](https://github.com/iamevandrake/opensoul) and [Paperclip](https://github.com/WeAreBini/paperclip). It adds a consumer-facing layer on top:
+
+- **Google OAuth** for simple sign-in
+- **Agent team templates** for instant setup
+- **BYOK API key management** so users control their own AI costs
+- **Consumer-friendly dashboard** with simplified navigation
+
+<br/>
+
 ## License
 
 MIT &copy; 2026 Simhasana LLC
@@ -148,5 +127,5 @@ MIT &copy; 2026 Simhasana LLC
 ---
 
 <p align="center">
-  <sub>Open source under MIT &copy; Simhasana LLC. Built on <a href="https://github.com/WeAreBini/paperclip">Paperclip</a>. Made for marketers who want results, not busywork.</sub>
+  <sub>Open source under MIT &copy; Simhasana LLC. Built on <a href="https://github.com/iamevandrake/opensoul">opensoul</a> and <a href="https://github.com/WeAreBini/paperclip">Paperclip</a>.</sub>
 </p>

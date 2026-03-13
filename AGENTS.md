@@ -4,7 +4,7 @@ Guidance for human and AI contributors working in this repository.
 
 ## 1. Purpose
 
-opensoul is an agentic marketing stack built on [Paperclip](https://github.com/paperclipai/paperclip). It provides a pre-configured marketing agency org — Director, Strategist, Producer, Creative, Growth Marketer, and Analyst — orchestrated as autonomous AI agents.
+Soulsquad is a consumer-facing AI marketing platform built on [opensoul](https://github.com/iamevandrake/opensoul) and [Paperclip](https://github.com/WeAreBini/paperclip). Users sign in with Google, pick an agent team template, bring their own API key, and get an autonomous marketing squad.
 
 The underlying platform is Paperclip V1, defined in `doc/SPEC-implementation.md`.
 
